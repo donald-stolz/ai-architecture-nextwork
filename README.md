@@ -1,4 +1,5 @@
 # AI Question Answering Service
+[![Architecture Check](https://github.com/donald-stolz/ai-architecture-nextwork/actions/workflows/architecture.yml/badge.svg)](https://github.com/donald-stolz/ai-architecture-nextwork/actions/workflows/architecture.yml)
 
 ## Architecture
 
