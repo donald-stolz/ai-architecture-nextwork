@@ -1,4 +1,5 @@
 # AI Question Answering Service
+
 [![Architecture Check](https://github.com/donald-stolz/ai-architecture-nextwork/actions/workflows/architecture.yml/badge.svg)](https://github.com/donald-stolz/ai-architecture-nextwork/actions/workflows/architecture.yml)
 
 ## Architecture
@@ -9,29 +10,24 @@ C4Container
     title C4 Level 2 - AI Question Answering Service
 
     Person(user, "User", "Sends questions via HTTP")
-    System_Ext(gemini, "Google Gemini API", "External LLM service")
+    System_Ext(genai, "Google Gemini API", "External LLM service")
 
-    Container_Boundary(system, "AI Question Answering Service") {
-        Container(api, "API Container", "FastAPI", "Receives HTTP requests and returns responses")
-        Container(orchestrator, "Prompt Orchestrator", "Python module", "Builds prompts from user input and system context")
-        Container(provider, "Model Provider", "Python module", "Sends prompts to the LLM and returns generated text")
+    System_Boundary(system, "AI Question Answering Service") {
+        Container(main, "API Container", "FastAPI", "Receives HTTP requests and returns responses")
+        Container(orchestrator, "Prompt Orchestrator", "Python module", "Builds prompts from user and system context")
+        Container(model_provider, "Model Provider", "Python module", "Calls the LLM and returns generated text")
+        Container(architecture_context, "Architecture Context", "Python module", "Reads the C4 diagram from README.md")
     }
 
-    Rel(user, api, "POST /ask", "HTTPS")
-    Rel(api, orchestrator, "User question")
-    Rel(orchestrator, provider, "LLM prompt")
-    Rel(provider, gemini, "generate_content()", "HTTPS")
+    Rel(user, main, "POST /ask", "HTTPS")
+    Rel(main, orchestrator, "User question")
+    Rel(orchestrator, model_provider, "LLM prompt")
+    Rel(model_provider, genai, "generate_content()", "HTTPS")
+    Rel(orchestrator, architecture_context, "Architecture question")
+    Rel(architecture_context, orchestrator, "C4 context")
 
-    UpdateRelStyle(user, api, $offsetX="-45", $offsetY="-30")
-    UpdateRelStyle(api, orchestrator, $offsetX="-40", $offsetY="-10")
-    UpdateRelStyle(orchestrator, provider, $offsetX="-35", $offsetY="-10")
-    UpdateRelStyle(provider, gemini, $offsetX="10")
+    UpdateRelStyle(user, main, $offsetX="-45", $offsetY="-30")
+    UpdateRelStyle(main, orchestrator, $offsetX="-40", $offsetY="-10")
+    UpdateRelStyle(orchestrator, model_provider, $offsetX="-45", $offsetY="-10")
+    UpdateRelStyle(model_provider, genai, $offsetX="10")
 ```
-
-## Container-to-Code Mapping
-
-| Diagram Container | Code File | Responsibility |
-|---|---|---|
-| API Container | `main.py` | Receives HTTP requests and returns responses |
-| Prompt Orchestrator | `orchestrator.py` | Builds prompts from user input and system context |
-| Model Provider | `model_provider.py` | Sends prompts to Gemini and returns generated text |
